@@ -20,20 +20,20 @@ class PhotoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
     @IBOutlet weak var collectionView: UICollectionView!
     
     override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        self.mapView.delegate = self
-        self.collectionView.delegate = self
-        self.collectionView.dataSource = self
-        
-        self.navigationController?.navigationBarHidden = false
-        
-        addAnnotation()
         
         FlickrClient.sharedInstance().getPhotos(Double(pin.latitude!), longitude: Double(pin.longitude!)) { (result, error) in
             if let error = error {
                 print(error)
             } else {
+                
+                self.addAnnotation()
+                
+                self.mapView.delegate = self
+                self.collectionView.delegate = self
+                self.collectionView.dataSource = self
+                
+                self.navigationController?.navigationBarHidden = false
+                
                 self.URLs = result!
             }
         }
