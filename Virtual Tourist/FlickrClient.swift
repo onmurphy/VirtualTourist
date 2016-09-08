@@ -39,7 +39,8 @@ class FlickrClient: NSObject {
     
     func taskForGETMethod(latitude: Double, longitude: Double, completionHandlerForGET: (result: AnyObject!, error: String?) -> Void) -> NSURLSessionDataTask {
         
-        let page = arc4random_uniform(191) + 1
+        let page = 1
+        //arc4random_uniform(191) + 1
         
         let url = "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=7eaeeb9b2a2b5fb73118f4802fa13b65&lat=\(latitude)&lon=\(longitude)&format=json&nojsoncallback=1&per_page=21&page=\(page)"
         

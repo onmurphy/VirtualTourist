@@ -35,6 +35,8 @@ class PhotoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
                 self.navigationController?.navigationBarHidden = false
                 
                 self.URLs = result!
+                
+                self.collectionView.reloadData()
             }
         }
     }
