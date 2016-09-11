@@ -80,6 +80,9 @@
                                             </subviews>
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
+                                        <connections>
+                                            <outlet property="imageView" destination="UOn-l9-YOs" id="bwa-fM-oJL"/>
+                                        </connections>
                                     </collectionViewCell>
                                 </cells>
                                 <connections>

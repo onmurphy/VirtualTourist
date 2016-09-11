@@ -11,7 +11,21 @@ import CoreData
 
 
 class Photos: NSManagedObject {
-
+    convenience init(url: String, context : NSManagedObjectContext){
+        
+        // An EntityDescription is an object that has access to all
+        // the information you provided in the Entity part of the model
+        // you need it to create an instance of this class.
+        if let ent = NSEntityDescription.entityForName("Photos",
+                                                       inManagedObjectContext: context){
+            self.init(entity: ent, insertIntoManagedObjectContext: context)
+            self.url = url
+            
+        }else{
+            fatalError("Unable to find Entity name!")
+        }
+        
+    }
     
 
 }
