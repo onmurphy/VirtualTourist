@@ -16,6 +16,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     let stack = CoreDataStack(modelName: "Model")!
     
+    var sharedSession = NSURLSession.sharedSession()
+    
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         stack.autoSave(60)
         return true

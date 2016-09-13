@@ -38,9 +38,9 @@ class FlickrClient: NSObject {
             
                     let url = "http://farm\(farm!).staticflickr.com/\(server!)/\(id!)_\(secret!)_m.jpg"
                     
-                    let data = NSData(contentsOfURL: NSURL(string: url)!)
+                    //let data = NSData(contentsOfURL: NSURL(string: url)!)
                     
-                    let photo = Photos(url: url, data: data, context: self.stack.context)
+                    let photo = Photos(url: url, data: nil, context: self.stack.context)
                     
                     photo.pin = pin
                     

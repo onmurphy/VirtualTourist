@@ -21,6 +21,8 @@ class PhotoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
     
     var stack: CoreDataStack!
     
+    var appDelegate: AppDelegate!
+    
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var collectionView: UICollectionView!
     
@@ -86,8 +88,29 @@ class PhotoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
         cell.imageView.image = UIImage(named: "placeholder")
         //start activity indicator
         
+        
         if photos[indexPath.item].data == nil {
             cell.imageView.image = UIImage(named: "placeholder")
+            
+            let requestURL: NSURL = NSURL(string: photos[indexPath.item].url!)!
+            print(requestURL)
+            
+            let task = NSURLSession.sharedSession().dataTaskWithURL(requestURL) { (data, response, error) in
+                print(data)
+                guard (error == nil) else {
+                    print("There was an error with your request: \(error)")
+                    return
+                }
+                
+                guard let data = data else {
+                    print("No data was returned by the request!")
+                    return
+                }
+                
+                self.photos[indexPath.item].data = data
+
+                cell.imageView!.image = UIImage(data: data)
+            }
         }
         
         else {
