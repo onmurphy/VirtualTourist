@@ -14,7 +14,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
-    let stack = CoreDataStack(modelName: "Model2")!
+    let stack = CoreDataStack(modelName: "Model")!
     
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         stack.autoSave(60)

@@ -39,7 +39,6 @@ class PhotoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
         
         if photos.count == 0 {
             getNewPhotos()
-            self.collectionView.reloadData()
         }
     }
     
@@ -59,21 +58,24 @@ class PhotoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
     }
     
     func getNewPhotos () {
-        FlickrClient.sharedInstance().getPhotos(Double(pin.latitude!), longitude: Double(pin.longitude!)) { (result, error) in
+        FlickrClient.sharedInstance().getPhotos(Double(pin.latitude!), longitude: Double(pin.longitude!), pin: pin) { (result, error) in
             if let error = error {
                 print(error)
             } else {
-                self.URLs = result!
-            }
+                dispatch_async(dispatch_get_main_queue()) {
+                    self.photos = result!
+                    self.collectionView.reloadData()
+                }
+             }
         }
     }
     
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return self.URLs.count
+        return self.photos.count
     }
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
-        self.URLs.removeAtIndex(indexPath.item)
+        self.photos.removeAtIndex(indexPath.item)
         
         self.collectionView.deleteItemsAtIndexPaths([indexPath])
     }
@@ -81,15 +83,17 @@ class PhotoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cell", forIndexPath: indexPath) as! CustomCollectionViewCell
         
-        if self.URLs.isEmpty {
+        cell.imageView.image = UIImage(named: "placeholder")
+        //start activity indicator
+        
+        if photos[indexPath.item].data == nil {
             cell.imageView.image = UIImage(named: "placeholder")
-            getNewPhotos()
         }
         
         else {
-            let url = NSURL(string: self.URLs[indexPath.item])
-            let data = NSData(contentsOfURL: url!)
-            cell.imageView.image = UIImage(data: data!)
+            cell.imageView.image = UIImage(data: photos[indexPath.item].data!)
+            //stop activity indicator
+
         }
 
         return cell

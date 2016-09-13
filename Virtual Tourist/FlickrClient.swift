@@ -7,17 +7,24 @@
 //
 
 import Foundation
+import UIKit
 
 class FlickrClient: NSObject {
     
-    func getPhotos(latitude: Double, longitude: Double, completionHandlerForPhotos: (result: [String]?, error: String?) -> Void) {
+    var stack: CoreDataStack!
+
+    func getPhotos(latitude: Double, longitude: Double, pin: Pin, completionHandlerForPhotos: (result: [Photos]?, error: String?) -> Void) {
         
         taskForGETMethod(latitude, longitude: longitude) { (results, error) in
             
             if let error = error {
                 completionHandlerForPhotos(result: nil, error: error)
             } else {
-                var photosURLs = [String]()
+                
+                var finalPhotos: [Photos] = []
+                
+                let delegate = UIApplication.sharedApplication().delegate as! AppDelegate
+                self.stack = delegate.stack
                 
                 let photos = results["photos"] as! [String: AnyObject]
                 
@@ -30,9 +37,16 @@ class FlickrClient: NSObject {
                     let secret = p["secret"]
             
                     let url = "http://farm\(farm!).staticflickr.com/\(server!)/\(id!)_\(secret!)_m.jpg"
-                    photosURLs.append(url)
+                    
+                    let data = NSData(contentsOfURL: NSURL(string: url)!)
+                    
+                    let photo = Photos(url: url, data: data, context: self.stack.context)
+                    
+                    photo.pin = pin
+                    
+                    finalPhotos.append(photo)
                 }
-                completionHandlerForPhotos(result: photosURLs, error: nil)
+                completionHandlerForPhotos(result: finalPhotos, error: nil)
             }
         }
     }
