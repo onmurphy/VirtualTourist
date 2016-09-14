@@ -186,6 +186,7 @@
 				06151DB71D6BDAE6009669ED /* Main.storyboard */,
 				06151DBA1D6BDAE6009669ED /* Assets.xcassets */,
 				06151DBC1D6BDAE6009669ED /* LaunchScreen.storyboard */,
+				06151DBF1D6BDAE6009669ED /* Info.plist */,
 			);
 			name = Assets;
 			sourceTree = "<group>";
@@ -193,7 +194,6 @@
 		06151DE91D6D1CC5009669ED /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				06151DBF1D6BDAE6009669ED /* Info.plist */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";

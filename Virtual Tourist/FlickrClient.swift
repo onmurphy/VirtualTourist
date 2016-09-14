@@ -38,9 +38,13 @@ class FlickrClient: NSObject {
             
                     let url = "http://farm\(farm!).staticflickr.com/\(server!)/\(id!)_\(secret!)_m.jpg"
                     
-                    //let data = NSData(contentsOfURL: NSURL(string: url)!)
-                    
                     let photo = Photos(url: url, data: nil, context: self.stack.context)
+                    
+                    do{
+                        try self.stack.context.save()
+                    }catch{
+                        fatalError("Error while saving main context: \(error)")
+                    }
                     
                     photo.pin = pin
                     

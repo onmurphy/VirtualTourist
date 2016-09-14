@@ -26,6 +26,10 @@ class PhotoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var collectionView: UICollectionView!
     
+    @IBAction func newCollectionClicked() {
+        getNewPhotos()
+    }
+    
     override func viewDidLoad() {
         
         super.viewDidLoad()
@@ -86,17 +90,15 @@ class PhotoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cell", forIndexPath: indexPath) as! CustomCollectionViewCell
         
         cell.imageView.image = UIImage(named: "placeholder")
-        //start activity indicator
+        cell.indicator.startAnimating()
         
         
         if photos[indexPath.item].data == nil {
-            cell.imageView.image = UIImage(named: "placeholder")
             
             let requestURL: NSURL = NSURL(string: photos[indexPath.item].url!)!
-            print(requestURL)
             
             let task = NSURLSession.sharedSession().dataTaskWithURL(requestURL) { (data, response, error) in
-                print(data)
+                
                 guard (error == nil) else {
                     print("There was an error with your request: \(error)")
                     return
@@ -109,11 +111,18 @@ class PhotoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
                 
                 self.photos[indexPath.item].data = data
 
-                cell.imageView!.image = UIImage(data: data)
-            }
+                dispatch_async(dispatch_get_main_queue()) {
+                    cell.indicator.stopAnimating()
+                    cell.indicator.hidden = true
+                    cell.imageView!.image = UIImage(data: data)}
+                }
+            
+            task.resume()
         }
         
         else {
+            cell.indicator.stopAnimating()
+            cell.indicator.hidden = true
             cell.imageView.image = UIImage(data: photos[indexPath.item].data!)
             //stop activity indicator
 

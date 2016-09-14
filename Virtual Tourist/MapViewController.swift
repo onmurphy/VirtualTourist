@@ -126,7 +126,12 @@ class MapViewController: UIViewController, MKMapViewDelegate {
             mapView.addAnnotation(newAnotation)
             
             let pin = Pin(lat: newCoord.latitude, long: newCoord.longitude, context: stack.context)
-            print("Just created a pin: \(pin)")
+            
+            do{
+                try self.stack.context.save()
+            }catch{
+                fatalError("Error while saving main context: \(error)")
+            }
         }
         
     }
