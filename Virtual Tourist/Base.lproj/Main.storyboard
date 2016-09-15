@@ -123,6 +123,7 @@
                     <connections>
                         <outlet property="collectionView" destination="4DJ-aE-yZ2" id="RMJ-lJ-Cdq"/>
                         <outlet property="mapView" destination="Hz0-F4-sBJ" id="ves-Su-GOg"/>
+                        <outlet property="newButton" destination="j3U-b4-9yN" id="1t0-Pf-GEJ"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="MBJ-ux-jt3" userLabel="First Responder" sceneMemberID="firstResponder"/>

@@ -25,6 +25,7 @@ class PhotoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
     
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var collectionView: UICollectionView!
+    @IBOutlet weak var newButton: UIBarButtonItem!
     
     @IBAction func newCollectionClicked() {
         getNewPhotos()
@@ -42,6 +43,8 @@ class PhotoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
         
         let delegate = UIApplication.sharedApplication().delegate as! AppDelegate
         stack = delegate.stack
+        
+        //photos = pin.photos?
         
         if photos.count == 0 {
             getNewPhotos()
@@ -64,13 +67,25 @@ class PhotoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
     }
     
     func getNewPhotos () {
+        newButton.enabled = false
+        
         FlickrClient.sharedInstance().getPhotos(Double(pin.latitude!), longitude: Double(pin.longitude!), pin: pin) { (result, error) in
             if let error = error {
                 print(error)
             } else {
-                dispatch_async(dispatch_get_main_queue()) {
-                    self.photos = result!
-                    self.collectionView.reloadData()
+                if result!.count == 0 {
+                    
+                    let alertController = UIAlertController(title: "", message:
+                        "No images found for this location", preferredStyle: UIAlertControllerStyle.Alert)
+                    alertController.addAction(UIAlertAction(title: "Dismiss", style: UIAlertActionStyle.Default,handler: nil))
+                    
+                    self.presentViewController(alertController, animated: true, completion: nil)
+                } else {
+                    dispatch_async(dispatch_get_main_queue()) {
+                        self.photos = result!
+                        self.collectionView.reloadData()
+                        self.newButton.enabled = true
+                    }
                 }
              }
         }
@@ -81,6 +96,9 @@ class PhotoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
     }
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+        
+        self.stack.context.deleteObject(photos[indexPath.item])
+        
         self.photos.removeAtIndex(indexPath.item)
         
         self.collectionView.deleteItemsAtIndexPaths([indexPath])
@@ -124,8 +142,6 @@ class PhotoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
             cell.indicator.stopAnimating()
             cell.indicator.hidden = true
             cell.imageView.image = UIImage(data: photos[indexPath.item].data!)
-            //stop activity indicator
-
         }
 
         return cell
