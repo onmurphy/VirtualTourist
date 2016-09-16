@@ -44,7 +44,25 @@ class PhotoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
         let delegate = UIApplication.sharedApplication().delegate as! AppDelegate
         stack = delegate.stack
         
-        //photos = pin.photos?
+        let fr = NSFetchRequest(entityName: "Photos")
+
+        do {
+            let result = try self.stack.context.executeFetchRequest(fr)
+            
+            if result.count != 0 {
+                for managedObject in result {
+                    print(managedObject.pin)
+                    if managedObject.pin == pin {
+                        photos.append(managedObject as! Photos)
+                    }
+                }
+            } else {
+                getNewPhotos()
+            }            
+        } catch {
+            let fetchError = error as NSError
+            print(fetchError)
+        }
         
         if photos.count == 0 {
             getNewPhotos()
@@ -68,6 +86,12 @@ class PhotoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
     
     func getNewPhotos () {
         newButton.enabled = false
+        
+        for photo in photos {
+            self.stack.context.deleteObject(photo)
+        }
+        
+        photos.removeAll()
         
         FlickrClient.sharedInstance().getPhotos(Double(pin.latitude!), longitude: Double(pin.longitude!), pin: pin) { (result, error) in
             if let error = error {
@@ -113,29 +137,16 @@ class PhotoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
         
         if photos[indexPath.item].data == nil {
             
-            let requestURL: NSURL = NSURL(string: photos[indexPath.item].url!)!
+            FlickrClient.sharedInstance().requestPhotoData(photos, indexPath: indexPath) { (result, error) in
+                
+                self.photos[indexPath.item].data = result
             
-            let task = NSURLSession.sharedSession().dataTaskWithURL(requestURL) { (data, response, error) in
-                
-                guard (error == nil) else {
-                    print("There was an error with your request: \(error)")
-                    return
-                }
-                
-                guard let data = data else {
-                    print("No data was returned by the request!")
-                    return
-                }
-                
-                self.photos[indexPath.item].data = data
-
                 dispatch_async(dispatch_get_main_queue()) {
                     cell.indicator.stopAnimating()
                     cell.indicator.hidden = true
-                    cell.imageView!.image = UIImage(data: data)}
-                }
-            
-            task.resume()
+                    cell.imageView!.image = UIImage(data: result) }
+            }
+        
         }
         
         else {

@@ -103,6 +103,27 @@ class FlickrClient: NSObject {
         return task
     }
     
+    func requestPhotoData(photos: [Photos], indexPath: NSIndexPath, completionHandlerForConvertData: (result: NSData!, error: String?) -> Void) {
+        let requestURL: NSURL = NSURL(string: photos[indexPath.item].url!)!
+        
+        let task = NSURLSession.sharedSession().dataTaskWithURL(requestURL) { (data, response, error) in
+            
+            guard (error == nil) else {
+                completionHandlerForConvertData(result: nil, error: "Could not parse data")
+                return
+            }
+            
+            guard let data = data else {
+                completionHandlerForConvertData(result: nil, error: "Could not parse data")
+                return
+            }
+            
+            completionHandlerForConvertData(result: data, error: nil)
+        }
+        
+        task.resume()
+    }
+    
     private func convertDataWithCompletionHandler(data: NSData, completionHandlerForConvertData: (result: AnyObject!, error: String?) -> Void) {
         
         var parsedResult: AnyObject!

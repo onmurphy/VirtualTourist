@@ -92,6 +92,8 @@ class MapViewController: UIViewController, MKMapViewDelegate {
             print (error)
         }
         
+        mapView.deselectAnnotation(view.annotation, animated: true)
+        
         let vc = self.storyboard!.instantiateViewControllerWithIdentifier("PhotoAlbumViewController") as! PhotoAlbumViewController
         vc.pin = pin
         vc.mapView = mapView
