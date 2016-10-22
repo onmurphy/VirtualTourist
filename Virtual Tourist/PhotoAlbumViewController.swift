@@ -23,6 +23,8 @@ class PhotoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
     
     var appDelegate: AppDelegate!
     
+    var result = [AnyObject]()
+    
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var newButton: UIBarButtonItem!
@@ -46,24 +48,27 @@ class PhotoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
         
         let fr = NSFetchRequest(entityName: "Photos")
 
-        do {
-            let result = try self.stack.context.executeFetchRequest(fr)
-            
-            if result.count != 0 {
-                for managedObject in result {
-                    print(managedObject.pin)
-                    guard managedObject.pin == pin else {
-                        continue
+        stack.context.performBlockAndWait({ () -> Void in
+            do {
+                self.result = try self.stack.context.executeFetchRequest(fr)
+                
+                if self.result.count != 0 {
+                    for managedObject in self.result {
+                        print(managedObject.pin)
+                        guard managedObject.pin == self.pin else {
+                            continue
+                        }
+                        self.photos.append(managedObject as! Photos)
                     }
-                    photos.append(managedObject as! Photos)
+                } else {
+                    self.getNewPhotos()
                 }
-            } else {
-                getNewPhotos()
-            }            
-        } catch {
-            let fetchError = error as NSError
-            print(fetchError)
-        }
+            }
+            catch {
+                let fetchError = error as NSError
+                print(fetchError)
+            }
+        })
         
         if photos.count == 0 {
             getNewPhotos()
