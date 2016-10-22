@@ -52,9 +52,10 @@ class PhotoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
             if result.count != 0 {
                 for managedObject in result {
                     print(managedObject.pin)
-                    if managedObject.pin == pin {
-                        photos.append(managedObject as! Photos)
+                    guard managedObject.pin == pin else {
+                        continue
                     }
+                    photos.append(managedObject as! Photos)
                 }
             } else {
                 getNewPhotos()
