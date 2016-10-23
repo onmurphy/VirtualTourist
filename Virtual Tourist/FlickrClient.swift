@@ -40,13 +40,13 @@ class FlickrClient: NSObject {
                     
                     let photo = Photos(url: url, data: nil, context: self.stack.context)
                     
+                    photo.pin = pin
+                    
                     do{
                         try self.stack.context.save()
                     }catch{
                         fatalError("Error while saving main context: \(error)")
                     }
-                    
-                    photo.pin = pin
                     
                     finalPhotos.append(photo)
                 }
